@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode.shared;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -45,28 +44,30 @@ public class TestTeleOp extends OpMode {
 
   private ElapsedTime runtime = new ElapsedTime();
 
-  private DcMotor frontLeftMotor;
-  private DcMotor frontRightMotor;
-  private DcMotor backLeftMotor;
-  private DcMotor backRightMotor;
+  private DcMotor fl, fr, bl, br;
+
+  double frPower = 0;
+  double flPower = 0;
+  double brPower = 0;
+  double blPower = 0;
 
   @Override
   public void init() {
 
-    frontLeftMotor = hardwareMap.get(DcMotor.class, "front_left_motor");
-    frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
-    backLeftMotor = hardwareMap.get(DcMotor.class, "back_left_motor");
-    backRightMotor = hardwareMap.get(DcMotor.class, "back_right_motor");
+    fl = hardwareMap.get(DcMotor.class, "front_left_motor");
+    fr = hardwareMap.get(DcMotor.class, "front_right_motor");
+    bl = hardwareMap.get(DcMotor.class, "back_left_motor");
+    br = hardwareMap.get(DcMotor.class, "back_right_motor");
 
-    frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-    frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-    backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-    frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-    backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+    fl.setDirection(DcMotorSimple.Direction.FORWARD);
+    bl.setDirection(DcMotorSimple.Direction.FORWARD);
+    fr.setDirection(DcMotorSimple.Direction.REVERSE);
+    br.setDirection(DcMotorSimple.Direction.REVERSE);
 
     telemetry.addData("Status", "Initialized");
   }
@@ -77,10 +78,7 @@ public class TestTeleOp extends OpMode {
      */
   @Override
   public void init_loop() {
-    frontLeftMotor.setPower(gamepad1.left_stick_y);
-    frontRightMotor.setPower(gamepad1.left_stick_y);
-    backLeftMotor.setPower(gamepad1.left_stick_y);
-    backRightMotor.setPower(gamepad1.left_stick_y);
+
   }
 
   /*
@@ -90,6 +88,8 @@ public class TestTeleOp extends OpMode {
   @Override
   public void start() {
     runtime.reset();
+
+
   }
 
   /*
@@ -99,5 +99,45 @@ public class TestTeleOp extends OpMode {
   @Override
   public void loop() {
     telemetry.addData("Status", "Run Time: " + runtime.toString());
+
+    double drive = gamepad1.left_stick_y;
+    double strafe = gamepad1.left_stick_x;
+    double turn = gamepad1.right_stick_x;
+    double precision = (gamepad1.left_trigger-1.5)/-1.5;
+    double accelRate = 0.007;
+
+    double flTargetPower = drive - strafe - turn;
+    double frTargetPower = drive + strafe + turn;
+    double blTargetPower = drive + strafe - turn;
+    double brTargetPower = drive - strafe + turn;
+
+    if(flPower < flTargetPower){
+      flPower += accelRate;
+    }else if(flPower > flTargetPower){
+      flPower -= accelRate;
+    }
+
+    if(frPower < frTargetPower){
+      frPower += accelRate;
+    }else if(frPower > frTargetPower){
+      frPower -= accelRate;
+    }
+
+    if(blPower < blTargetPower){
+      blPower += accelRate;
+    }else if(blPower > blTargetPower){
+      blPower -= accelRate;
+    }
+
+    if(brPower < brTargetPower){
+      brPower += accelRate;
+    }else if(brPower > brTargetPower){
+      brPower -= accelRate;
+    }
+
+    fl.setPower(flPower * precision);
+    fr.setPower(frPower * precision);
+    bl.setPower(blPower * precision);
+    br.setPower(brPower * precision);
   }
 }
