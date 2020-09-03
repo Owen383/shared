@@ -35,109 +35,93 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/**
- * Demonstrates empty OpMode
- */
 @TeleOp(name = "TestTeleOp")
 //@Disabled
 public class TestTeleOp extends OpMode {
 
-  private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
 
-  private DcMotor fl, fr, bl, br;
+    private DcMotor fl, fr, bl, br;
 
-  double frPower = 0;
-  double flPower = 0;
-  double brPower = 0;
-  double blPower = 0;
+    double frPower = 0;
+    double flPower = 0;
+    double brPower = 0;
+    double blPower = 0;
 
-  @Override
-  public void init() {
+    @Override
+    public void init() {
 
-    fl = hardwareMap.get(DcMotor.class, "front_left_motor");
-    fr = hardwareMap.get(DcMotor.class, "front_right_motor");
-    bl = hardwareMap.get(DcMotor.class, "back_left_motor");
-    br = hardwareMap.get(DcMotor.class, "back_right_motor");
+        fl = hardwareMap.get(DcMotor.class, "front_left_motor");
+        fr = hardwareMap.get(DcMotor.class, "front_right_motor");
+        bl = hardwareMap.get(DcMotor.class, "back_left_motor");
+        br = hardwareMap.get(DcMotor.class, "back_right_motor");
 
-    fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-    fl.setDirection(DcMotorSimple.Direction.FORWARD);
-    bl.setDirection(DcMotorSimple.Direction.FORWARD);
-    fr.setDirection(DcMotorSimple.Direction.REVERSE);
-    br.setDirection(DcMotorSimple.Direction.REVERSE);
+        fl.setDirection(DcMotorSimple.Direction.FORWARD);
+        bl.setDirection(DcMotorSimple.Direction.FORWARD);
+        fr.setDirection(DcMotorSimple.Direction.REVERSE);
+        br.setDirection(DcMotorSimple.Direction.REVERSE);
 
-    telemetry.addData("Status", "Initialized");
-  }
-
-  /*
-     * Code to run when the op mode is first enabled goes here
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
-     */
-  @Override
-  public void init_loop() {
-
-  }
-
-  /*
-   * This method will be called ONCE when start is pressed
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
-  @Override
-  public void start() {
-    runtime.reset();
-
-
-  }
-
-  /*
-   * This method will be called repeatedly in a loop
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
-  @Override
-  public void loop() {
-    telemetry.addData("Status", "Run Time: " + runtime.toString());
-
-    double drive = gamepad1.left_stick_y;
-    double strafe = gamepad1.left_stick_x;
-    double turn = gamepad1.right_stick_x;
-    double precision = (gamepad1.left_trigger-1.5)/-1.5;
-    double accelRate = 0.007;
-
-    double flTargetPower = drive - strafe - turn;
-    double frTargetPower = drive + strafe + turn;
-    double blTargetPower = drive + strafe - turn;
-    double brTargetPower = drive - strafe + turn;
-
-    if(flPower < flTargetPower){
-      flPower += accelRate;
-    }else if(flPower > flTargetPower){
-      flPower -= accelRate;
+        telemetry.addData("Status", "Initialized");
     }
 
-    if(frPower < frTargetPower){
-      frPower += accelRate;
-    }else if(frPower > frTargetPower){
-      frPower -= accelRate;
+    @Override
+    public void init_loop() {
+
     }
 
-    if(blPower < blTargetPower){
-      blPower += accelRate;
-    }else if(blPower > blTargetPower){
-      blPower -= accelRate;
+    @Override
+    public void start() {
+        runtime.reset();
+
     }
 
-    if(brPower < brTargetPower){
-      brPower += accelRate;
-    }else if(brPower > brTargetPower){
-      brPower -= accelRate;
-    }
+    @Override
+    public void loop() {
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
 
-    fl.setPower(flPower * precision);
-    fr.setPower(frPower * precision);
-    bl.setPower(blPower * precision);
-    br.setPower(brPower * precision);
-  }
+        double drive = gamepad1.left_stick_y;
+        double strafe = gamepad1.left_stick_x;
+        double turn = gamepad1.right_stick_x;
+        double precision = (gamepad1.left_trigger - 1.5) / -1.5;
+        double accelRate = 0.007;
+
+        double flTargetPower = drive - strafe - turn;
+        double frTargetPower = drive + strafe + turn;
+        double blTargetPower = drive + strafe - turn;
+        double brTargetPower = drive - strafe + turn;
+
+        if (flPower < flTargetPower) {
+            flPower += accelRate;
+        } else if (flPower > flTargetPower) {
+            flPower -= accelRate;
+        }
+
+        if (frPower < frTargetPower) {
+            frPower += accelRate;
+        } else if (frPower > frTargetPower) {
+            frPower -= accelRate;
+        }
+
+        if (blPower < blTargetPower) {
+            blPower += accelRate;
+        } else if (blPower > blTargetPower) {
+            blPower -= accelRate;
+        }
+
+        if (brPower < brTargetPower) {
+            brPower += accelRate;
+        } else if (brPower > brTargetPower) {
+            brPower -= accelRate;
+        }
+
+        fl.setPower(flPower * precision);
+        fr.setPower(frPower * precision);
+        bl.setPower(blPower * precision);
+        br.setPower(brPower * precision);
+    }
 }
